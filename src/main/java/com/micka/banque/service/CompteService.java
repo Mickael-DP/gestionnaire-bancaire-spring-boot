@@ -1,5 +1,7 @@
 package com.micka.banque.service;
 
+import com.micka.banque.exception.CompteNotFoundException;
+import com.micka.banque.exception.SoldeInsuffisantException;
 import com.micka.banque.model.Compte;
 import com.micka.banque.repository.CompteRepository;
 import lombok.RequiredArgsConstructor;
@@ -30,15 +32,11 @@ public class CompteService {
     }
 
     public  Compte consulterCompte(Long id ){
-        return compteRepository.findById(id).orElse(null);
+        return compteRepository.findById(id).orElseThrow(() -> new CompteNotFoundException(id));
     }
 
     public Compte deposer (Long id, double montant){
         Compte compte = consulterCompte(id);
-
-        if (compte == null) {
-            return null;
-        }
 
         compte.setSolde(compte.getSolde() + montant);
 
@@ -49,12 +47,8 @@ public class CompteService {
     public  Compte retirer (Long id, double montant){
         Compte compte = consulterCompte(id);
 
-        if (compte == null) {
-            return null;
-        }
-
         if (compte.getSolde() < montant){
-            return null;
+       throw new SoldeInsuffisantException();
         }
 
         compte.setSolde(compte.getSolde() - montant);

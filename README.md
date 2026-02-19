@@ -1,4 +1,4 @@
-# 🏦 Banque Spring Boot - API REST
+# 🏦 Gestionnaire Bancaire - API REST Spring Boot
 
 Mon premier projet Spring Boot - Une API REST pour la gestion de comptes bancaires.
 
@@ -18,24 +18,38 @@ Application bancaire permettant de gérer des comptes avec les opérations suiva
 - **Maven**
 - **Lombok**
 - **Spring Web**
+- **Spring Data JPA / Hibernate**
+- **MySQL 8.0**
+- **Docker**
 
 ## 📦 Architecture
 
-Le projet suit l'architecture en 3 couches :
+Le projet suit l'architecture en 4 couches :
 ```
 src/
-├── model/          # Entités (Compte)
+├── model/          # Entités JPA (Compte)
+├── repository/     # Accès base de données (CompteRepository)
 ├── service/        # Logique métier (CompteService)
-└── controller/     # Endpoints REST (CompteController)
+├── controller/     # Endpoints REST (CompteController)
+└── exception/      # Gestion des erreurs (404, 400)
 ```
 
 ## 🚀 Lancement de l'application
+
+### Prérequis
+- Java 17
+- Docker
+
+### Étapes
 ```bash
 # Cloner le projet
 git clone https://github.com/Mickael-DP/gestionnaire-bancaire-spring-boot
 
 # Aller dans le répertoire
 cd gestionnaire-bancaire-spring-boot
+
+# Lancer MySQL avec Docker
+docker-compose up -d
 
 # Lancer l'application
 ./mvnw spring-boot:run
@@ -70,26 +84,33 @@ PUT /api/comptes/{id}/depot?montant=100
 PUT /api/comptes/{id}/retrait?montant=50
 ```
 
+## ⚠️ Gestion des erreurs
+
+| Code | Description |
+|------|-------------|
+| 404  | Compte introuvable |
+| 400  | Solde insuffisant |
+
 ## 📝 Exemple d'utilisation avec Postman
 
 1. **Créer un compte :**
-    - Méthode : `POST`
-    - URL : `http://localhost:8080/api/comptes`
-    - Params : `titulaire=John Doe`, `type=COURANT`
+   - Méthode : `POST`
+   - URL : `http://localhost:8080/api/comptes`
+   - Params : `titulaire=John Doe`, `type=COURANT`
 
 2. **Faire un dépôt :**
-    - Méthode : `PUT`
-    - URL : `http://localhost:8080/api/comptes/1/depot`
-    - Params : `montant=500`
+   - Méthode : `PUT`
+   - URL : `http://localhost:8080/api/comptes/1/depot`
+   - Params : `montant=500`
 
 3. **Consulter le solde :**
-    - Méthode : `GET`
-    - URL : `http://localhost:8080/api/comptes/1`
+   - Méthode : `GET`
+   - URL : `http://localhost:8080/api/comptes/1`
 
 ## 🎯 Prochaines améliorations
 
-- [ ] Intégration base de données (H2/MySQL)
-- [ ] Gestion des exceptions
+- [x] Intégration base de données (MySQL + Docker)
+- [x] Gestion des exceptions
 - [ ] Validation des données
 - [ ] Endpoint virement entre comptes
 - [ ] Documentation Swagger
