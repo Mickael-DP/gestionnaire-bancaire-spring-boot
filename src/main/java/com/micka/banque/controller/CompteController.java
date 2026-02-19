@@ -2,7 +2,9 @@ package com.micka.banque.controller;
 
 import com.micka.banque.model.Compte;
 import com.micka.banque.service.CompteService;
+import jakarta.validation.constraints.NotBlank;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -10,6 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/comptes")
 @RequiredArgsConstructor
+@Validated
 public class CompteController {
 
     private final CompteService compteService;
@@ -20,8 +23,8 @@ public class CompteController {
     }
 
     @PostMapping
-    public Compte creerCompte(@RequestParam String titulaire,
-                              @RequestParam String type) {
+    public Compte creerCompte(@RequestParam @NotBlank String titulaire,
+                              @RequestParam @NotBlank String type) {
         return compteService.creerCompte(titulaire, type);
     }
 

@@ -10,6 +10,7 @@ Application bancaire permettant de gérer des comptes avec les opérations suiva
 - Dépôt d'argent
 - Retrait d'argent
 - Liste de tous les comptes
+- Virement entre comptes
 
 ## 🛠️ Technologies utilisées
 
@@ -21,6 +22,7 @@ Application bancaire permettant de gérer des comptes avec les opérations suiva
 - **Spring Data JPA / Hibernate**
 - **MySQL 8.0**
 - **Docker**
+- **Bean Validation**
 
 ## 📦 Architecture
 
@@ -84,12 +86,17 @@ PUT /api/comptes/{id}/depot?montant=100
 PUT /api/comptes/{id}/retrait?montant=50
 ```
 
+### Virement entre deux comptes
+```http
+POST /api/comptes/virement?idSource=1&idDestination=2&montant=100
+```
+
 ## ⚠️ Gestion des erreurs
 
 | Code | Description |
 |------|-------------|
 | 404  | Compte introuvable |
-| 400  | Solde insuffisant |
+| 400  | Solde insuffisant ou données invalides |
 
 ## 📝 Exemple d'utilisation avec Postman
 
@@ -107,11 +114,16 @@ PUT /api/comptes/{id}/retrait?montant=50
    - Méthode : `GET`
    - URL : `http://localhost:8080/api/comptes/1`
 
+4. **Faire un virement :**
+   - Méthode : `POST`
+   - URL : `http://localhost:8080/api/comptes/virement`
+   - Params : `idSource=1`, `idDestination=2`, `montant=100`
+
 ## 🎯 Prochaines améliorations
 
 - [x] Intégration base de données (MySQL + Docker)
 - [x] Gestion des exceptions
-- [ ] Validation des données
+- [x] Validation des données
 - [ ] Endpoint virement entre comptes
 - [ ] Documentation Swagger
 - [ ] Tests unitaires

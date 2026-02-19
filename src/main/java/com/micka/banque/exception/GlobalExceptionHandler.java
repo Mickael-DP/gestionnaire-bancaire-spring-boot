@@ -1,5 +1,6 @@
 package com.micka.banque.exception;
 
+import jakarta.validation.ConstraintViolationException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,6 +15,11 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(SoldeInsuffisantException.class)
     public  ResponseEntity<String> handleSoldeInsuffisant(SoldeInsuffisantException e){
+        return ResponseEntity.status(400).body(e.getMessage());
+    }
+
+    @ExceptionHandler(ConstraintViolationException.class)
+    public ResponseEntity<String> handleConstraintViolation(ConstraintViolationException e){
         return ResponseEntity.status(400).body(e.getMessage());
     }
 
