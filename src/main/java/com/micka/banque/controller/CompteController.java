@@ -42,4 +42,9 @@ public class CompteController {
     public Compte retirer (@PathVariable Long id, @RequestParam double montant){
         return compteService.retirer(id, montant);
     }
+
+    @PostMapping("/virement")
+    public Compte virement (@RequestParam Long idSource, @RequestParam Long idDestination, @RequestParam double montant){
+        return  compteService.virement(idSource, idDestination, montant);
+    }
 }

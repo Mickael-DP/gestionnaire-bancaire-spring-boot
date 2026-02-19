@@ -6,6 +6,8 @@ import com.micka.banque.model.Compte;
 import com.micka.banque.repository.CompteRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.List;
 
 @Service
@@ -55,6 +57,23 @@ public class CompteService {
 
         return compteRepository.save(compte);
 
+    }
+
+    @Transactional
+    public Compte virement (Long idSource, Long idDestination, double montant){
+        Compte compteSource = consulterCompte(idSource);
+        Compte compteDestination = consulterCompte(idDestination);
+
+        if (compteSource.getSolde() < montant){
+            throw new SoldeInsuffisantException();
+        }
+
+        compteDestination.setSolde(compteDestination.getSolde() + montant);
+        compteSource.setSolde(compteSource.getSolde() - montant );
+
+        compteRepository.save(compteSource);
+
+        return compteRepository.save(compteDestination);
     }
 
 }
