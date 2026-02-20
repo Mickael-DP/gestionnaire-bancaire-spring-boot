@@ -124,7 +124,7 @@ POST /api/comptes/virement?idSource=1&idDestination=2&montant=100
 - [x] Intégration base de données (MySQL + Docker)
 - [x] Gestion des exceptions
 - [x] Validation des données
-- [ ] Endpoint virement entre comptes
+- [x] Endpoint virement entre comptes
 - [ ] Documentation Swagger
 - [ ] Tests unitaires
 
