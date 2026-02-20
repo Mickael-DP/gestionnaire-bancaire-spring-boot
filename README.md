@@ -23,17 +23,28 @@ Application bancaire permettant de gérer des comptes avec les opérations suiva
 - **MySQL 8.0**
 - **Docker**
 - **Bean Validation**
+- **Swagger / OpenAPI**
+- **JUnit 5 / Mockito**
 
 ## 📦 Architecture
 
-Le projet suit l'architecture en 4 couches :
+Le projet suit l'architecture en couches :
 ```
 src/
-├── model/          # Entités JPA (Compte)
-├── repository/     # Accès base de données (CompteRepository)
-├── service/        # Logique métier (CompteService)
-├── controller/     # Endpoints REST (CompteController)
-└── exception/      # Gestion des erreurs (404, 400)
+├── main/
+│   ├── java/com/micka/banque/
+│   │   ├── config/         # Configuration Swagger
+│   │   ├── controller/     # Endpoints REST (CompteController)
+│   │   ├── exception/      # Gestion des erreurs (404, 400)
+│   │   ├── model/          # Entités JPA (Compte)
+│   │   ├── repository/     # Accès base de données (CompteRepository)
+│   │   └── service/        # Logique métier (CompteService)
+│   └── resources/
+│       └── application.properties
+├── test/
+│   └── java/com/micka/banque/
+│       └── service/        # Tests unitaires (CompteServiceTest)
+└── docker-compose.yml
 ```
 
 ## 🚀 Lancement de l'application
@@ -58,6 +69,8 @@ docker-compose up -d
 ```
 
 L'application sera accessible sur `http://localhost:8080`
+
+La documentation Swagger sera accessible sur `http://localhost:8080/swagger-ui/index.html`
 
 ## 📡 Endpoints disponibles
 
@@ -126,7 +139,8 @@ POST /api/comptes/virement?idSource=1&idDestination=2&montant=100
 - [x] Validation des données
 - [x] Endpoint virement entre comptes
 - [x] Documentation Swagger
-- [ ] Tests unitaires
+- [x] Tests unitaires
+- [ ] Connexion frontend Angular
 
 ## 👨‍💻 Auteur
 
