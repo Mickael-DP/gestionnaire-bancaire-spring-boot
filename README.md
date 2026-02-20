@@ -125,7 +125,7 @@ POST /api/comptes/virement?idSource=1&idDestination=2&montant=100
 - [x] Gestion des exceptions
 - [x] Validation des données
 - [x] Endpoint virement entre comptes
-- [ ] Documentation Swagger
+- [x] Documentation Swagger
 - [ ] Tests unitaires
 
 ## 👨‍💻 Auteur
