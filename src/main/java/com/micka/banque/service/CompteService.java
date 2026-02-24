@@ -29,6 +29,11 @@ public class CompteService {
         return compteRepository.save(compte);
     }
 
+    public void suppCompte (Long id){
+        compteRepository.findById(id).orElseThrow(() -> new CompteNotFoundException(id));
+        compteRepository.deleteById(id);
+    }
+
     public List<Compte> listerComptes() {
         return compteRepository.findAll();
     }

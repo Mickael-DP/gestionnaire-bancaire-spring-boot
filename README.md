@@ -1,21 +1,24 @@
 # 🏦 Gestionnaire Bancaire - API REST Spring Boot
 
-Mon premier projet Spring Boot - Une API REST pour la gestion de comptes bancaires.
+Mon premier projet Spring Boot - Une API REST sécurisée pour la gestion de comptes bancaires.
 
 ## 📋 Description
 
 Application bancaire permettant de gérer des comptes avec les opérations suivantes :
+- Inscription et authentification (JWT)
 - Création de compte
 - Consultation de compte
 - Dépôt d'argent
 - Retrait d'argent
 - Liste de tous les comptes
 - Virement entre comptes
+- Suppression de compte
 
 ## 🛠️ Technologies utilisées
 
 - **Java 17**
 - **Spring Boot 4.0.2**
+- **Spring Security + JWT (jjwt 0.12.6)**
 - **Maven**
 - **Lombok**
 - **Spring Web**
@@ -34,11 +37,13 @@ src/
 ├── main/
 │   ├── java/com/micka/banque/
 │   │   ├── config/         # Configuration Swagger
-│   │   ├── controller/     # Endpoints REST (CompteController)
+│   │   ├── controller/     # Endpoints REST (CompteController, AuthController)
+│   │   ├── dto/            # Objets de transfert (CompteRequest, AuthRequest, RegisterRequest...)
 │   │   ├── exception/      # Gestion des erreurs (404, 400)
-│   │   ├── model/          # Entités JPA (Compte)
-│   │   ├── repository/     # Accès base de données (CompteRepository)
-│   │   └── service/        # Logique métier (CompteService)
+│   │   ├── model/          # Entités JPA (Compte, User)
+│   │   ├── repository/     # Accès base de données (CompteRepository, UserRepository)
+│   │   ├── security/       # JWT + Spring Security (JwtService, JwtAuthFilter, SecurityConfig)
+│   │   └── service/        # Logique métier (CompteService, AuthService)
 │   └── resources/
 │       └── application.properties
 ├── test/
@@ -72,65 +77,45 @@ L'application sera accessible sur `http://localhost:8080`
 
 La documentation Swagger sera accessible sur `http://localhost:8080/swagger-ui/index.html`
 
+## 🔐 Authentification
+
+L'API utilise JWT. Pour accéder aux endpoints protégés :
+
+1. Créer un compte via `POST /auth/register`
+2. Se connecter via `POST /auth/login` pour obtenir un token
+3. Ajouter le token dans le header de chaque requête :
+
+```
+Authorization: Bearer <token>
+```
+
 ## 📡 Endpoints disponibles
 
-### Lister tous les comptes
+### Authentification
 ```http
-GET /api/comptes
+POST /auth/register   # Créer un compte utilisateur
+POST /auth/login      # Se connecter et obtenir un token
 ```
 
-### Créer un compte
+### Comptes (🔒 Token requis)
 ```http
-POST /api/comptes?titulaire=NomPrenom&type=COURANT
-```
-
-### Consulter un compte
-```http
-GET /api/comptes/{id}
-```
-
-### Faire un dépôt
-```http
-PUT /api/comptes/{id}/depot?montant=100
-```
-
-### Faire un retrait
-```http
-PUT /api/comptes/{id}/retrait?montant=50
-```
-
-### Virement entre deux comptes
-```http
-POST /api/comptes/virement?idSource=1&idDestination=2&montant=100
+GET    /api/comptes              # Lister tous les comptes
+POST   /api/comptes              # Créer un compte
+GET    /api/comptes/{id}         # Consulter un compte
+PUT    /api/comptes/{id}/depot   # Faire un dépôt
+PUT    /api/comptes/{id}/retrait # Faire un retrait
+POST   /api/comptes/virement     # Virement entre comptes
+DELETE /api/comptes/{id}         # Supprimer un compte
 ```
 
 ## ⚠️ Gestion des erreurs
 
 | Code | Description |
 |------|-------------|
+| 400  | Données invalides ou solde insuffisant |
+| 401  | Non authentifié |
+| 403  | Accès refusé |
 | 404  | Compte introuvable |
-| 400  | Solde insuffisant ou données invalides |
-
-## 📝 Exemple d'utilisation avec Postman
-
-1. **Créer un compte :**
-   - Méthode : `POST`
-   - URL : `http://localhost:8080/api/comptes`
-   - Params : `titulaire=John Doe`, `type=COURANT`
-
-2. **Faire un dépôt :**
-   - Méthode : `PUT`
-   - URL : `http://localhost:8080/api/comptes/1/depot`
-   - Params : `montant=500`
-
-3. **Consulter le solde :**
-   - Méthode : `GET`
-   - URL : `http://localhost:8080/api/comptes/1`
-
-4. **Faire un virement :**
-   - Méthode : `POST`
-   - URL : `http://localhost:8080/api/comptes/virement`
-   - Params : `idSource=1`, `idDestination=2`, `montant=100`
 
 ## 🎯 Prochaines améliorations
 
@@ -140,7 +125,10 @@ POST /api/comptes/virement?idSource=1&idDestination=2&montant=100
 - [x] Endpoint virement entre comptes
 - [x] Documentation Swagger
 - [x] Tests unitaires
-- [ ] Connexion frontend Angular
+- [x] Authentification Spring Security + JWT
+- [x] Connexion frontend Angular
+- [ ] Liaison comptes ↔ utilisateurs
+- [ ] Historique des mouvements
 
 ## 👨‍💻 Auteur
 
