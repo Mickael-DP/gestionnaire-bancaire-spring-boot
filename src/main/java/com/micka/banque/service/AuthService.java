@@ -24,7 +24,8 @@ public class AuthService {
 
     public AuthResponse register(RegisterRequest request){
         User user = new User();
-        user.setUsername(request.getUsername());
+        String username = request.getFirstname().toLowerCase() + "." + request.getLastname().toLowerCase();
+        user.setUsername(username);
         user.setFirstname(request.getFirstname());
         user.setLastname(request.getLastname());
         user.setEmail(request.getEmail());
@@ -42,12 +43,12 @@ public class AuthService {
     public AuthResponse login(AuthRequest request) {
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
-                        request.getUsername(),
+                        request.getEmail(),
                         request.getPassword()
                 )
         );
 
-        User user = userRepository.findByUsername(request.getUsername()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
+        User user = userRepository.findByEmail(request.getEmail()).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
         String token = jwtService.generateToken(user);
         AuthResponse response = new AuthResponse();
         response.setToken(token);

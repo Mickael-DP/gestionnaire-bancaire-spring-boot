@@ -9,6 +9,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 @CrossOrigin(origins = "http://localhost:4200")
 @RestController
@@ -27,6 +28,11 @@ public class AuthController {
     @PostMapping("/login")
     public AuthResponse login(@RequestBody @Valid AuthRequest request) {
         return authService.login(request);
+    }
+
+    @GetMapping("/me")
+    public User me(Authentication authentication) {
+        return (User) authentication.getPrincipal();
     }
 
 

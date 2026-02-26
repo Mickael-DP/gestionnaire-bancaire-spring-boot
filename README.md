@@ -6,11 +6,11 @@ Mon premier projet Spring Boot - Une API REST sécurisée pour la gestion de com
 
 Application bancaire permettant de gérer des comptes avec les opérations suivantes :
 - Inscription et authentification (JWT)
-- Création de compte
+- Création de compte lié à l'utilisateur connecté
 - Consultation de compte
 - Dépôt d'argent
 - Retrait d'argent
-- Liste de tous les comptes
+- Liste des comptes de l'utilisateur connecté
 - Virement entre comptes
 - Suppression de compte
 
@@ -38,11 +38,13 @@ src/
 │   ├── java/com/micka/banque/
 │   │   ├── config/         # Configuration Swagger
 │   │   ├── controller/     # Endpoints REST (CompteController, AuthController)
-│   │   ├── dto/            # Objets de transfert (CompteRequest, AuthRequest, RegisterRequest...)
-│   │   ├── exception/      # Gestion des erreurs (404, 400)
+│   │   ├── dto/            # Objets de transfert (CompteRequest, OperationRequest,
+│   │   │                   # VirementRequest, AuthRequest, AuthResponse, RegisterRequest)
+│   │   ├── exception/      # Gestion des erreurs (404, 400, 403)
 │   │   ├── model/          # Entités JPA (Compte, User)
 │   │   ├── repository/     # Accès base de données (CompteRepository, UserRepository)
-│   │   ├── security/       # JWT + Spring Security (JwtService, JwtAuthFilter, SecurityConfig)
+│   │   ├── security/       # JWT + Spring Security (JwtService, JwtAuthFilter,
+│   │   │                   # SecurityConfig, UserDetailsServiceImpl)
 │   │   └── service/        # Logique métier (CompteService, AuthService)
 │   └── resources/
 │       └── application.properties
@@ -93,14 +95,15 @@ Authorization: Bearer <token>
 
 ### Authentification
 ```http
-POST /auth/register   # Créer un compte utilisateur
-POST /auth/login      # Se connecter et obtenir un token
+POST /auth/register   # Créer un compte utilisateur (username généré auto : prenom.nom)
+POST /auth/login      # Se connecter par email + password → retourne un token JWT
+GET  /auth/me         # Récupérer les infos de l'utilisateur connecté
 ```
 
 ### Comptes (🔒 Token requis)
 ```http
-GET    /api/comptes              # Lister tous les comptes
-POST   /api/comptes              # Créer un compte
+GET    /api/comptes              # Lister les comptes de l'utilisateur connecté
+POST   /api/comptes              # Créer un compte lié à l'utilisateur connecté
 GET    /api/comptes/{id}         # Consulter un compte
 PUT    /api/comptes/{id}/depot   # Faire un dépôt
 PUT    /api/comptes/{id}/retrait # Faire un retrait
@@ -108,13 +111,21 @@ POST   /api/comptes/virement     # Virement entre comptes
 DELETE /api/comptes/{id}         # Supprimer un compte
 ```
 
+## 🔒 Sécurité
+
+- Chaque compte appartient à un utilisateur (`@ManyToOne` entre `Compte` et `User`)
+- Un utilisateur ne peut voir et modifier que ses propres comptes
+- Erreur 403 si tentative d'accès aux comptes d'autrui
+- Connexion par email (le `getUsername()` de `UserDetails` retourne l'email)
+- CORS configuré pour `http://localhost:4200`
+
 ## ⚠️ Gestion des erreurs
 
 | Code | Description |
 |------|-------------|
 | 400  | Données invalides ou solde insuffisant |
 | 401  | Non authentifié |
-| 403  | Accès refusé |
+| 403  | Accès refusé (compte appartenant à un autre utilisateur) |
 | 404  | Compte introuvable |
 
 ## 🎯 Prochaines améliorations
@@ -126,8 +137,8 @@ DELETE /api/comptes/{id}         # Supprimer un compte
 - [x] Documentation Swagger
 - [x] Tests unitaires
 - [x] Authentification Spring Security + JWT
+- [x] Liaison comptes ↔ utilisateurs
 - [x] Connexion frontend Angular
-- [ ] Liaison comptes ↔ utilisateurs
 - [ ] Historique des mouvements
 
 ## 👨‍💻 Auteur
