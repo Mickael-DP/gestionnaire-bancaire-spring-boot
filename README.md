@@ -7,12 +7,15 @@ Mon premier projet Spring Boot - Une API REST sécurisée pour la gestion de com
 Application bancaire permettant de gérer des comptes avec les opérations suivantes :
 - Inscription et authentification (JWT)
 - Création de compte lié à l'utilisateur connecté
+- Nommage personnalisé des comptes
+- Titulaire automatique depuis le profil utilisateur
 - Consultation de compte
 - Dépôt d'argent
 - Retrait d'argent
 - Liste des comptes de l'utilisateur connecté
 - Virement entre comptes
-- Suppression de compte
+- Suppression de compte avec cascade
+- Historique des mouvements
 
 ## 🛠️ Technologies utilisées
 
@@ -30,8 +33,6 @@ Application bancaire permettant de gérer des comptes avec les opérations suiva
 - **JUnit 5 / Mockito**
 
 ## 📦 Architecture
-
-Le projet suit l'architecture en couches :
 ```
 src/
 ├── main/
@@ -41,8 +42,9 @@ src/
 │   │   ├── dto/            # Objets de transfert (CompteRequest, OperationRequest,
 │   │   │                   # VirementRequest, AuthRequest, AuthResponse, RegisterRequest)
 │   │   ├── exception/      # Gestion des erreurs (404, 400, 403)
-│   │   ├── model/          # Entités JPA (Compte, User)
-│   │   ├── repository/     # Accès base de données (CompteRepository, UserRepository)
+│   │   ├── model/          # Entités JPA (Compte, User, Mouvement)
+│   │   ├── repository/     # Accès base de données (CompteRepository, UserRepository,
+│   │   │                   # MouvementRepository)
 │   │   ├── security/       # JWT + Spring Security (JwtService, JwtAuthFilter,
 │   │   │                   # SecurityConfig, UserDetailsServiceImpl)
 │   │   └── service/        # Logique métier (CompteService, AuthService)
@@ -86,7 +88,6 @@ L'API utilise JWT. Pour accéder aux endpoints protégés :
 1. Créer un compte via `POST /auth/register`
 2. Se connecter via `POST /auth/login` pour obtenir un token
 3. Ajouter le token dans le header de chaque requête :
-
 ```
 Authorization: Bearer <token>
 ```
@@ -102,13 +103,14 @@ GET  /auth/me         # Récupérer les infos de l'utilisateur connecté
 
 ### Comptes (🔒 Token requis)
 ```http
-GET    /api/comptes              # Lister les comptes de l'utilisateur connecté
-POST   /api/comptes              # Créer un compte lié à l'utilisateur connecté
-GET    /api/comptes/{id}         # Consulter un compte
-PUT    /api/comptes/{id}/depot   # Faire un dépôt
-PUT    /api/comptes/{id}/retrait # Faire un retrait
-POST   /api/comptes/virement     # Virement entre comptes
-DELETE /api/comptes/{id}         # Supprimer un compte
+GET    /api/comptes                    # Lister les comptes de l'utilisateur connecté
+POST   /api/comptes                    # Créer un compte lié à l'utilisateur connecté
+GET    /api/comptes/{id}               # Consulter un compte
+PUT    /api/comptes/{id}/depot         # Faire un dépôt
+PUT    /api/comptes/{id}/retrait       # Faire un retrait
+POST   /api/comptes/virement           # Virement entre comptes
+DELETE /api/comptes/{id}               # Supprimer un compte
+GET    /api/comptes/{id}/historiques   # Historique des mouvements
 ```
 
 ## 🔒 Sécurité
@@ -128,7 +130,7 @@ DELETE /api/comptes/{id}         # Supprimer un compte
 | 403  | Accès refusé (compte appartenant à un autre utilisateur) |
 | 404  | Compte introuvable |
 
-## 🎯 Prochaines améliorations
+## 🎯 Réalisations
 
 - [x] Intégration base de données (MySQL + Docker)
 - [x] Gestion des exceptions
@@ -138,8 +140,11 @@ DELETE /api/comptes/{id}         # Supprimer un compte
 - [x] Tests unitaires
 - [x] Authentification Spring Security + JWT
 - [x] Liaison comptes ↔ utilisateurs
+- [x] Titulaire automatique depuis le profil
+- [x] Nommage personnalisé des comptes
+- [x] Historique des mouvements
+- [x] Suppression en cascade
 - [x] Connexion frontend Angular
-- [ ] Historique des mouvements
 
 ## 👨‍💻 Auteur
 

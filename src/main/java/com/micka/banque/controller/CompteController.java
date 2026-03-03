@@ -33,7 +33,7 @@ public class CompteController {
     @PostMapping
     public Compte creerCompte(@RequestBody @Valid CompteRequest request, Authentication authentication) {
         String username = authentication.getName();
-        return compteService.creerCompte(username, request.getTitulaire(), request.getType());
+        return compteService.creerCompte(username, request.getNomCompte(), request.getType());
     }
 
     @DeleteMapping("/{id}")

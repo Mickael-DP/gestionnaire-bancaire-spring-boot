@@ -46,14 +46,16 @@ public class CompteService {
         mouvementRepository.save(mouvement);
     }
 
-    public Compte creerCompte (String username, String titulaire, String type ){
+    public Compte creerCompte (String username,String nomCompte , String type ){
 
         User user = userRepository.findByEmail(username).orElseThrow(() -> new RuntimeException("Utilisateur non trouvé"));
         String numeroCompte = "FR" + System.currentTimeMillis();
+        String proprietaire = user.getFirstname() + " " + user.getLastname();
 
         Compte compte = new Compte();
+        compte.setNomCompte(nomCompte);
         compte.setCompteNumber(numeroCompte);
-        compte.setTitulaire(titulaire);
+        compte.setTitulaire(proprietaire);
         compte.setType(type);
         compte.setSolde(0.0);
         compte.setOwner(user);
