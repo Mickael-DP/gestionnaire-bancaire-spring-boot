@@ -4,6 +4,7 @@ import com.micka.banque.dto.CompteRequest;
 import com.micka.banque.dto.OperationRequest;
 import com.micka.banque.dto.VirementRequest;
 import com.micka.banque.model.Compte;
+import com.micka.banque.model.Mouvement;
 import com.micka.banque.service.CompteService;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -45,6 +46,11 @@ public class CompteController {
     public Compte consulterCompte(@PathVariable Long id, Authentication authentication){
         String username = authentication.getName();
         return compteService.consulterCompte(username, id);
+    }
+    @GetMapping("/{id}/historiques")
+    public List<Mouvement> historiqueMouvement(@PathVariable Long id, Authentication authentication){
+        String username = authentication.getName();
+        return compteService.historiqueDeMouvement(username, id);
     }
 
     @PutMapping("/{id}/depot")

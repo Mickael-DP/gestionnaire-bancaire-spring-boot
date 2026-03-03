@@ -4,13 +4,16 @@ import com.micka.banque.exception.AccessDeniedException;
 import com.micka.banque.exception.CompteNotFoundException;
 import com.micka.banque.exception.SoldeInsuffisantException;
 import com.micka.banque.model.Compte;
+import com.micka.banque.model.Mouvement;
 import com.micka.banque.model.User;
 import com.micka.banque.repository.CompteRepository;
+import com.micka.banque.repository.MouvementRepository;
 import com.micka.banque.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -19,6 +22,7 @@ public class CompteService {
 
     private final CompteRepository compteRepository;
     private final UserRepository userRepository;
+    private final MouvementRepository mouvementRepository;
 
     private Compte getCompteWithOwnerCheck(Long id, String email) {
         return compteRepository.findByIdAndOwner_Email(id, email)
@@ -29,6 +33,17 @@ public class CompteService {
                         throw new CompteNotFoundException(id);
                     }
                 });
+    }
+
+    private void enregistrerMouvement(Compte compte, String type, double montant, String compteSource){
+        Mouvement mouvement = new Mouvement();
+        mouvement.setCompte(compte);
+        mouvement.setType(type);
+        mouvement.setMontant(montant);
+        mouvement.setCompteSource(compteSource);
+        mouvement.setDate(LocalDateTime.now());
+
+        mouvementRepository.save(mouvement);
     }
 
     public Compte creerCompte (String username, String titulaire, String type ){
@@ -56,6 +71,11 @@ public class CompteService {
         return compteRepository.findByOwner_Email(email);
     }
 
+    public List<Mouvement> historiqueDeMouvement(String username, Long id) {
+        getCompteWithOwnerCheck(id, username);
+        return mouvementRepository.findByCompte_IdOrderByDateDesc(id);
+    }
+
     public Compte consulterCompte(String username, Long id) {
         return getCompteWithOwnerCheck(id, username);
     }
@@ -63,6 +83,8 @@ public class CompteService {
     public Compte deposer(String username, Long id, double montant) {
         Compte compte = getCompteWithOwnerCheck(id, username);
         compte.setSolde(compte.getSolde() + montant);
+
+        enregistrerMouvement(compte, "DEPOT", montant, null );
         return compteRepository.save(compte);
     }
 
@@ -74,6 +96,8 @@ public class CompteService {
         }
 
         compte.setSolde(compte.getSolde() - montant);
+
+        enregistrerMouvement(compte, "RETRAIT", montant, null );
 
         return compteRepository.save(compte);
 
@@ -92,8 +116,10 @@ public class CompteService {
         compteSource.setSolde(compteSource.getSolde() - montant );
 
         compteRepository.save(compteSource);
-
+        enregistrerMouvement(compteSource, "VIREMENT_SORTANT", montant, compteDestination.getCompteNumber());
+        enregistrerMouvement(compteDestination, "VIREMENT_ENTRANT", montant, compteSource.getCompteNumber());
         return compteRepository.save(compteDestination);
     }
+
 
 }
