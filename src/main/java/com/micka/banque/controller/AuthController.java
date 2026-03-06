@@ -11,7 +11,6 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
-@CrossOrigin(origins = {"http://localhost:4200", "https://gestionnaire-bancaire.vercel.app"})
 @RestController
 @RequestMapping("/auth")
 @RequiredArgsConstructor
