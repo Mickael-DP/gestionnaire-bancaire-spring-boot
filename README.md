@@ -1,6 +1,17 @@
 # 🏦 Gestionnaire Bancaire - API REST Spring Boot
 
-Mon premier projet Spring Boot - Une API REST sécurisée pour la gestion de comptes bancaires.
+## 🎯 Objectif du projet
+
+Projet fullstack réalisé pour consolider ma maîtrise de Spring Boot et Angular sur une architecture complète incluant :
+
+- Authentification JWT
+- Sécurité applicative avec Spring Security
+- Architecture en couches
+- Tests unitaires
+- Dockerisation base de données
+- Communication front / back sécurisée
+
+L’objectif était de simuler une API bancaire réaliste avec des règles métier (virements, contrôle de solde, accès restreint par utilisateur).
 
 ## 📋 Description
 
